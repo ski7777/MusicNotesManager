@@ -15,7 +15,6 @@ const (
 	outputvarname  = "migrations"
 	outputvartype  = "[]*gormigrate.Migration"
 	funcmigrate    = "Migrate"
-	funcrollback   = "Rollback"
 	importprefix   = "github.com/ski7777/MusicNotesManager/" + migrationspath
 	pkgprefix      = "migration"
 )
@@ -23,6 +22,8 @@ const (
 var (
 	imports = []string{
 		"github.com/go-gormigrate/gormigrate/v2",
+		"gorm.io/gorm",
+		"log",
 	}
 )
 
@@ -39,8 +40,7 @@ func main() {
 		if f.IsDir() {
 			vardata = append(vardata, "{")
 			vardata = append(vardata, "ID:\""+f.Name()+"\",")
-			vardata = append(vardata, "Migrate:"+pkgprefix+f.Name()+"."+funcmigrate+",")
-			vardata = append(vardata, "Rollback:"+pkgprefix+f.Name()+"."+funcrollback+",")
+			vardata = append(vardata, "Migrate: func(db *gorm.DB) error{ log.Println(\"Migrating\", "+f.Name()+"); return "+pkgprefix+f.Name()+"."+funcmigrate+"(db)},")
 			vardata = append(vardata, "},")
 			imports = append(imports, importprefix+"/"+f.Name())
 		}
@@ -61,5 +61,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ioutil.WriteFile(os.ExpandEnv("$PWD/"+outputpath), code, 0644)
+	if err = ioutil.WriteFile(os.ExpandEnv("$PWD/"+outputpath), code, 0644); err != nil {
+		panic(err)
+	}
 }
