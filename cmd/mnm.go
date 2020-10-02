@@ -6,6 +6,7 @@ import (
 	"github.com/akamensky/argparse"
 	"github.com/ski7777/MusicNotesManager/internal/config"
 	"github.com/ski7777/MusicNotesManager/internal/database"
+	"github.com/ski7777/MusicNotesManager/internal/filestore"
 	"io/ioutil"
 	"log"
 	"os"
@@ -35,6 +36,10 @@ func main() {
 		log.Fatal(err)
 	}
 	_, err = database.GetDB(conf.Database.Driver, conf.Database.DSN)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = filestore.NewFileStore(conf.FileStore)
 	if err != nil {
 		log.Println(err)
 	}

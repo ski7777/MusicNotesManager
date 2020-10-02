@@ -5,4 +5,5 @@ type Config struct {
 		Driver string `json:"driver"`
 		DSN    string `json:"dsn"`
 	} `json:"database"`
+	FileStore string `json:"filestore"`
 }
