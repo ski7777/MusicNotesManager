@@ -10,24 +10,28 @@ import (
 	"gorm.io/gorm"
 )
 
-var drivers = map[string]func(string) gorm.Dialector{
-	"mysql":    mysql.Open,
-	"sqlite":   sqlite.Open,
-	"postgres": postgres.Open,
-	"mssql":    sqlserver.Open,
+// ts == thread-safe
+var drivers = map[string]struct {
+	f  func(string) gorm.Dialector
+	ts bool
+}{
+	"mysql":    {f: mysql.Open, ts: true},
+	"sqlite":   {f: sqlite.Open, ts: false},
+	"postgres": {f: postgres.Open, ts: true},
+	"mssql":    {f: sqlserver.Open, ts: true},
 }
 
-func GetDB(driver, dsn string) (*gorm.DB, error) {
+func GetDB(driver, dsn string) (*gorm.DB, bool, error) {
 	d, ok := drivers[driver]
 	if !ok {
-		return nil, errors.New("unknown database driver")
+		return nil, false, errors.New("unknown database driver")
 	}
-	db, err := gorm.Open(d(dsn), nil)
+	db, err := gorm.Open(d.f(dsn), nil)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	if err = migration.Migrate(db); err != nil {
-		return nil, err
+		return nil, false, err
 	}
-	return db, nil
+	return db, d.ts, nil
 }

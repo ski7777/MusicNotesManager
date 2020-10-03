@@ -35,7 +35,7 @@ func main() {
 	if err = json.Unmarshal(rawconf, conf); err != nil {
 		log.Fatal(err)
 	}
-	_, err = database.GetDB(conf.Database.Driver, conf.Database.DSN)
+	_, _, err := database.GetDB(conf.Database.Driver, conf.Database.DSN)
 	if err != nil {
 		log.Println(err)
 	}
