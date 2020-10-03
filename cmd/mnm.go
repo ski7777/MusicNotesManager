@@ -7,6 +7,7 @@ import (
 	"github.com/ski7777/MusicNotesManager/internal/config"
 	"github.com/ski7777/MusicNotesManager/internal/database"
 	"github.com/ski7777/MusicNotesManager/internal/filestore"
+	"github.com/ski7777/MusicNotesManager/internal/mnm"
 	"io/ioutil"
 	"log"
 	"os"
@@ -35,12 +36,16 @@ func main() {
 	if err = json.Unmarshal(rawconf, conf); err != nil {
 		log.Fatal(err)
 	}
-	_, _, err := database.GetDB(conf.Database.Driver, conf.Database.DSN)
+	db, dbts, err := database.GetDB(conf.Database.Driver, conf.Database.DSN)
 	if err != nil {
 		log.Println(err)
 	}
-	_, err = filestore.NewFileStore(conf.FileStore)
+	fs, err := filestore.NewFileStore(conf.FileStore)
 	if err != nil {
 		log.Println(err)
+	}
+	m := mnm.NewMusicNotesManager(db, dbts, fs)
+	if err = m.Run(); err != nil {
+		log.Fatal(err)
 	}
 }
