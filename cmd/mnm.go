@@ -28,22 +28,22 @@ func main() {
 	conf := &config.Config{}
 	conffile, err := os.Open(*configpath)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	rawconf, err := ioutil.ReadAll(conffile)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	if err = json.Unmarshal(rawconf, conf); err != nil {
 		log.Fatal(err)
 	}
 	db, dbts, err := database.GetDB(conf.Database.Driver, conf.Database.DSN)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	fs, err := filestore.NewFileStore(conf.FileStore)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
 	m := mnm.NewMusicNotesManager(db, dbts, fs)
 	w, err := web.NewWeb(m)
