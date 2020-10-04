@@ -8,6 +8,7 @@ import (
 	"github.com/ski7777/MusicNotesManager/internal/database"
 	"github.com/ski7777/MusicNotesManager/internal/filestore"
 	"github.com/ski7777/MusicNotesManager/internal/mnm"
+	"github.com/ski7777/MusicNotesManager/internal/web"
 	"io/ioutil"
 	"log"
 	"os"
@@ -45,6 +46,15 @@ func main() {
 		log.Println(err)
 	}
 	m := mnm.NewMusicNotesManager(db, dbts, fs)
+	w, err := web.NewWeb(m)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go func() {
+		if err := w.Start(conf.WebAddr); err != nil {
+			log.Fatal(err)
+		}
+	}()
 	if err = m.Run(); err != nil {
 		log.Fatal(err)
 	}
