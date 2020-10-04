@@ -6,6 +6,7 @@ require (
 	github.com/akamensky/argparse v1.2.2
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/labstack/echo/v4 v4.1.17
+	github.com/labstack/gommon v0.3.0
 	github.com/markbates/pkger v0.17.1
 	github.com/spf13/afero v1.4.0
 	gorm.io/driver/mysql v1.0.1

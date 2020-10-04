@@ -3,6 +3,7 @@ package web
 import (
 	"bytes"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/markbates/pkger"
 	"github.com/ski7777/MusicNotesManager/internal/mnm"
 	"io"
@@ -32,6 +33,9 @@ func NewWeb(mnm *mnm.MusicNotesManager) (*web, error) {
 	w := new(web)
 	w.mnm = mnm
 	w.echo = echo.New()
+	w.echo.Logger.SetLevel(log.OFF)
+	w.echo.HideBanner = true
+	w.echo.HidePort = true
 	if err := pkger.Walk(HTDOCS, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
